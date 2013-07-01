@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "libsllpserver/sllp_server.h"
+#include "sllp_server.h"
 
 uint8_t buf[SLLP_MAX_MESSAGE];
 struct sllp_raw_packet response = { .data  = buf };
@@ -38,7 +38,7 @@ void hook(enum sllp_operation op, struct sllp_var **list);
 
 int main(void)
 {
-	sllp_instance_t *sllp = sllp_new(SLLP_SLAVE);
+	sllp_instance_t *sllp = sllp_new();
 
 	sllp_register_hook(sllp, hook);
 
