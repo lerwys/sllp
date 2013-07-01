@@ -4,7 +4,7 @@ BOARD =
 # Set your cross compile prefix with CROSS_COMPILE variable
 CROSS_COMPILE ?=
 
-CMDSEP = &
+CMDSEP = ;
 
 CC =			$(CROSS_COMPILE)gcc
 AR =			$(CROSS_COMPILE)ar
@@ -14,7 +14,7 @@ OBJCOPY =	$(CROSS_COMPILE)objcopy
 SIZE =		$(CROSS_COMPILE)size
 MAKE =		make
 
-INSTALL_DIR ?= test
+INSTALL_DIR ?= /usr/lib
 
 # Config variables suitable for creating shared libraries
 LIB_VER = 1.0.0
@@ -83,7 +83,7 @@ TARGET_STATIC = $(addsuffix $(LIB_STATIC_SUFFIX), $(OUT))
 TARGET_SHARED = $(addsuffix $(LIB_SHARED_SUFFIX), $(OUT))
 TARGET_SHARED_VER = $(addsuffix $(LIB_SHARED_SUFFIX).$(LIB_VER), $(OUT))
 
-.PHONY: all clean install tests
+.PHONY: all clean mrproper install uninstall tests
 
 # Avoid deletion of intermediate files, such as objects
 .SECONDARY: $(OBJS_all)
@@ -140,11 +140,18 @@ tests:
 	$(MAKE) -C $@ all
 
 install:
-	@mkdir -p $(INSTALL_DIR)
 	@install -m 755 $(TARGET_SHARED_VER) $(INSTALL_DIR)	
-	$(foreach lib,$(TARGET_SHARED),ln -s $(lib).$(LIB_VER) $(INSTALL_DIR)/$(lib) $(CMDSEP))
+	$(foreach lib,$(TARGET_SHARED),ln -sf $(lib).$(LIB_VER) $(INSTALL_DIR)/$(lib) $(CMDSEP))
+
+uninstall:
+	$(foreach lib,$(TARGET_SHARED),rm -f $(INSTALL_DIR)/$(lib).$(LIB_VER) $(CMDSEP))
+	$(foreach lib,$(TARGET_SHARED),rm -f $(INSTALL_DIR)/$(lib) $(CMDSEP))
 
 clean:
-	rm -f $(OBJS_all) *.a *.so.$(LIB_VER)
 	rm -f $(OBJS_all:.o=.d)
+	$(MAKE) -C tests clean
+
+mrproper:
+	rm -f $(OBJS_all:.o=.d)
+	rm -f $(OBJS_all) *.a *.so.$(LIB_VER)
 	$(MAKE) -C tests clean
