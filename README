@@ -1,0 +1,63 @@
+Sirius Low Level Protocol Repository
+
+================================================================================
+
+General Description:
+
+ - This repository contains the development of the Sirius Low Level Protocol (sllp)
+ libraries for both clients and servers. They are meant to serve as a reference
+ implementation of the specification protocol available at docs/ folder
+ (portuguese only!).
+
+================================================================================
+
+Repository Features:
+
+ - Server library API for handling protocol specifics (libsllpserver);
+ - Client library API for handling protocol specifics (libsllpclient) (TODO);
+ - Build system for server and client libraries and tests;
+ - Simple library meta-information variables ("build_revision" and "build_date"
+ in file revision.c). They can be used for version management inside library code;
+
+================================================================================
+
+Build Instructions:
+
+ - Compiling server and client libraries' in both static and shared versions:
+   > make
+
+ - Installing shared libraries in a system folder (or custom folder by means of
+ the INSTALL_DIR variable) and create appropriate symlinks:
+   > make install
+
+ - Compiling all tests available at tests/ folder with static and dynamic linking
+ to the libraries:
+   > make tests
+
+ - Uninstalling shared libraries and deleting symlinks (as opposed of make install):
+   > make uninstall
+
+ - Clean all intermediate files:
+   > make clean
+
+ - Clean all files, including the generated libraries:
+   > make mrproper
+
+================================================================================
+
+Tests Build System:
+
+To include new tests in the build system do the following:
+
+ - Create your test source files inside tests/ folder (subfolders hierarchy should
+ be supported)
+
+Inside tests/Makefile, do the following:
+
+ - Include your test name (<test_name>) in variable TESTS
+ - Create a variablefollowing the pattern <test_name>_SRCS and include your test's
+ source files
+ - Create a variable following the pattern <test_name>_LIBS and include your test's
+ library files (-l<lib_name>) and flags to be passed unmodified to the compiler
+
+The Makefile should do the rest...
