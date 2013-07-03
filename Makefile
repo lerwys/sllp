@@ -6,15 +6,16 @@ CROSS_COMPILE ?=
 
 CMDSEP = ;
 
-CC =			$(CROSS_COMPILE)gcc
-AR =			$(CROSS_COMPILE)ar
-LD =			$(CROSS_COMPILE)ld
+CC =		$(CROSS_COMPILE)gcc
+AR =		$(CROSS_COMPILE)ar
+LD =		$(CROSS_COMPILE)ld
 OBJDUMP =	$(CROSS_COMPILE)objdump
 OBJCOPY =	$(CROSS_COMPILE)objcopy
 SIZE =		$(CROSS_COMPILE)size
 MAKE =		make
 
 INSTALL_DIR ?= /usr/lib
+export INSTALL_DIR
 
 # Config variables suitable for creating shared libraries
 LIB_VER = 1.0.0
@@ -148,10 +149,8 @@ uninstall:
 	$(foreach lib,$(TARGET_SHARED),rm -f $(INSTALL_DIR)/$(lib) $(CMDSEP))
 
 clean:
-	rm -f $(OBJS_all:.o=.d)
+	rm -f $(OBJS_all) $(OBJS_all:.o=.d)
 	$(MAKE) -C tests clean
 
-mrproper:
-	rm -f $(OBJS_all:.o=.d)
-	rm -f $(OBJS_all) *.a *.so.$(LIB_VER)
-	$(MAKE) -C tests clean
+mrproper: clean
+	rm -f *.a *.so.$(LIB_VER)
